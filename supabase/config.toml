@@ -1,0 +1,11 @@
+project_id = "animal-care-tracker"
+
+[api]
+enabled = true
+schemas = ["public"]
+
+[auth]
+enabled = true
+
+[db]
+major_version = 15
