@@ -23,8 +23,8 @@ const desktopNavItems = [
   { href: "/animals", icon: "paw-outline", label: "Animals" },
   { href: "/dashboard", icon: "receipt-outline", label: "Logs" },
   { href: "/classes", icon: "clipboard-outline", label: "Classes & Templates" },
-  { href: "/settings", icon: "pricetag-outline", label: "Food Items" },
-  { href: "/settings", icon: "ticket-outline", label: "Tags" },
+  { href: "/food-items", icon: "pricetag-outline", label: "Food Items" },
+  { href: "/tags", icon: "ticket-outline", label: "Tags" },
   { href: "/people", icon: "people-outline", label: "People & Roles" },
   { href: "/settings", icon: "settings-outline", label: "Org Settings" }
 ] as const;
@@ -149,6 +149,8 @@ export function AppShell({ children }: PropsWithChildren) {
 function activeDesktopLabel(pathname: string) {
   if (pathname.startsWith("/animals")) return "Animals";
   if (pathname.startsWith("/classes")) return "Classes & Templates";
+  if (pathname.startsWith("/food-items")) return "Food Items";
+  if (pathname.startsWith("/tags")) return "Tags";
   if (pathname.startsWith("/people")) return "People & Roles";
   if (pathname.startsWith("/settings")) return "Org Settings";
   return "Dashboard";
@@ -156,6 +158,8 @@ function activeDesktopLabel(pathname: string) {
 
 function activeMobileLabel(pathname: string) {
   if (pathname.startsWith("/animals")) return "Animals";
+  if (pathname.startsWith("/food-items")) return "More";
+  if (pathname.startsWith("/tags")) return "More";
   if (pathname.startsWith("/people")) return "More";
   if (pathname.startsWith("/settings")) return "More";
   return "Dashboard";
@@ -164,6 +168,8 @@ function activeMobileLabel(pathname: string) {
 function routeTitle(pathname: string) {
   if (pathname.startsWith("/animals")) return "Animals";
   if (pathname.startsWith("/classes")) return "Classes & Templates";
+  if (pathname.startsWith("/food-items")) return "Food Items";
+  if (pathname.startsWith("/tags")) return "Tags";
   if (pathname.startsWith("/people")) return "People & Roles";
   if (pathname.startsWith("/settings")) return "Settings";
   return "Dashboard";
