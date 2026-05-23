@@ -1,10 +1,11 @@
-import { Redirect } from "expo-router";
+import { Redirect, usePathname } from "expo-router";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { isSupabaseConfigured } from "@/lib/env";
 
 export function RequireAuth({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const { initialized, session } = useAuth();
 
   if (!isSupabaseConfigured) {
@@ -21,7 +22,7 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
   }
 
   if (!session) {
-    return <Redirect href="/sign-in" />;
+    return <Redirect href={{ pathname: "/sign-in", params: { returnTo: pathname } } as never} />;
   }
 
   return <>{children}</>;

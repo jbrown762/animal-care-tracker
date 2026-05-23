@@ -32,6 +32,24 @@ export function PrimaryButton({
   );
 }
 
+export function SecondaryButton({
+  children,
+  disabled,
+  loading,
+  onPress
+}: PropsWithChildren<{ disabled?: boolean; loading?: boolean; onPress: () => void }>) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      disabled={disabled || loading}
+      onPress={onPress}
+      style={StyleSheet.flatten([styles.secondaryButton, (disabled || loading) && styles.disabledButton])}
+    >
+      {loading ? <ActivityIndicator color="#2f6f4e" /> : children}
+    </Pressable>
+  );
+}
+
 export function Card({ children }: PropsWithChildren) {
   return <View style={styles.card}>{children}</View>;
 }
@@ -74,6 +92,16 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 16,
     fontWeight: "800"
+  },
+  secondaryButton: {
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+    borderColor: "#cdd7c8",
+    borderRadius: 8,
+    borderWidth: 1,
+    minHeight: 48,
+    justifyContent: "center",
+    paddingHorizontal: 16
   },
   disabledButton: {
     opacity: 0.65

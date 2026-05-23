@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { AppShell, PageHeader } from "@/components/AppShell";
 import { Card, ErrorMessage, Field, PrimaryButton } from "@/components/Form";
 import { useOrg } from "@/contexts/OrgContext";
+import { buildInviteUrl, copyText } from "@/lib/inviteLinks";
 import type { OrgRole } from "@/types/database";
 
 export default function SettingsScreen() {
@@ -18,21 +19,42 @@ export default function SettingsScreen() {
     updateRole
   } = useOrg();
   const [email, setEmail] = useState("");
+  const [inviteLink, setInviteLink] = useState<string | null>(null);
+  const [inviteLinkStatus, setInviteLinkStatus] = useState<string | null>(null);
   const [role, setRole] = useState<OrgRole>("caretaker");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function submitInvite() {
     setError(null);
+    setInviteLink(null);
+    setInviteLinkStatus(null);
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
+      setError("Enter an email address.");
+      return;
+    }
+
     setLoading(true);
     try {
-      await inviteMember(email.trim(), role);
+      const token = await inviteMember(trimmedEmail, role);
+      setInviteLink(buildInviteUrl(token));
       setEmail("");
       setRole("caretaker");
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to invite member.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function copyInviteLink(link: string) {
+    setInviteLinkStatus(null);
+    try {
+      await copyText(link);
+      setInviteLinkStatus("Invite link copied.");
+    } catch (caught) {
+      setInviteLinkStatus(caught instanceof Error ? caught.message : "Unable to copy invite link.");
     }
   }
 
@@ -52,22 +74,34 @@ export default function SettingsScreen() {
         <>
           <Card>
             <Text style={styles.sectionTitle}>Invite member</Text>
-            <Field autoCapitalize="none" keyboardType="email-address" label="Email" onChangeText={setEmail} value={email} />
-            <View style={styles.segment}>
-              {(["caretaker", "admin"] as OrgRole[]).map((option) => (
-                <Pressable
-                  key={option}
-                  onPress={() => setRole(option)}
-                  style={StyleSheet.flatten([styles.segmentOption, role === option && styles.segmentOptionActive])}
-                >
-                  <Text style={StyleSheet.flatten([styles.segmentText, role === option && styles.segmentTextActive])}>
-                    {option}
-                  </Text>
-                </Pressable>
-              ))}
+            <View style={styles.inviteForm}>
+              <Field autoCapitalize="none" keyboardType="email-address" label="Email" onChangeText={setEmail} value={email} />
+              <View style={styles.segment}>
+                {(["caretaker", "admin"] as OrgRole[]).map((option) => (
+                  <Pressable
+                    key={option}
+                    onPress={() => setRole(option)}
+                    style={StyleSheet.flatten([styles.segmentOption, role === option && styles.segmentOptionActive])}
+                  >
+                    <Text style={StyleSheet.flatten([styles.segmentText, role === option && styles.segmentTextActive])}>
+                      {option}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+              <ErrorMessage message={error} />
+              {inviteLink ? (
+                <View style={styles.inviteLinkBox}>
+                  <Text style={styles.muted}>Invite link</Text>
+                  <Text selectable style={styles.inviteLinkText}>{inviteLink}</Text>
+                  <Pressable onPress={() => copyInviteLink(inviteLink)} style={styles.smallButton}>
+                    <Text style={styles.smallButtonText}>Copy link</Text>
+                  </Pressable>
+                </View>
+              ) : null}
+              {inviteLinkStatus ? <Text style={styles.success}>{inviteLinkStatus}</Text> : null}
+              <PrimaryButton disabled={!email.trim()} loading={loading} onPress={submitInvite}>Send invite</PrimaryButton>
             </View>
-            <ErrorMessage message={error} />
-            <PrimaryButton disabled={!email.trim()} loading={loading} onPress={submitInvite}>Send invite</PrimaryButton>
           </Card>
 
           <Card>
@@ -101,10 +135,16 @@ export default function SettingsScreen() {
                 <View style={styles.rowText}>
                   <Text style={styles.rowTitle}>{invitation.email}</Text>
                   <Text style={styles.muted}>{invitation.role}</Text>
+                  <Text selectable style={styles.pendingInviteLink}>{buildInviteUrl(invitation.token)}</Text>
                 </View>
-                <Pressable onPress={() => revokeInvitation(invitation.id)} style={styles.smallButton}>
-                  <Text style={styles.smallButtonText}>Revoke</Text>
-                </Pressable>
+                <View style={styles.rowActions}>
+                  <Pressable onPress={() => copyInviteLink(buildInviteUrl(invitation.token))} style={styles.smallButton}>
+                    <Text style={styles.smallButtonText}>Copy</Text>
+                  </Pressable>
+                  <Pressable onPress={() => revokeInvitation(invitation.id)} style={styles.smallButton}>
+                    <Text style={styles.smallButtonText}>Revoke</Text>
+                  </Pressable>
+                </View>
               </View>
             ))}
           </Card>
@@ -128,6 +168,34 @@ const styles = StyleSheet.create({
   muted: {
     color: "#526371",
     fontSize: 14
+  },
+  success: {
+    color: "#2f6f4e",
+    fontSize: 14,
+    fontWeight: "800"
+  },
+  inviteForm: {
+    gap: 14,
+    maxWidth: 520,
+    width: "100%"
+  },
+  inviteLinkBox: {
+    backgroundColor: "#f5f7f2",
+    borderColor: "#d8dfd4",
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 8,
+    padding: 12
+  },
+  inviteLinkText: {
+    color: "#1f2933",
+    fontSize: 13,
+    lineHeight: 18
+  },
+  pendingInviteLink: {
+    color: "#2f6f4e",
+    fontSize: 12,
+    lineHeight: 17
   },
   segment: {
     backgroundColor: "#eef2ea",
