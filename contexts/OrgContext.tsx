@@ -16,7 +16,7 @@ type OrgContextValue = {
   activeRole: OrgRole | null;
   createInitialOrg: (name: string, displayName: string) => Promise<void>;
   invitations: Invitation[];
-  inviteMember: (email: string, role: OrgRole) => Promise<void>;
+  inviteMember: (email: string, role: OrgRole) => Promise<string>;
   isAdmin: boolean;
   loading: boolean;
   memberships: Membership[];
@@ -117,7 +117,7 @@ export function OrgProvider({ children }: PropsWithChildren) {
       if (!supabase || !activeOrgId) {
         throw new Error("No active organization.");
       }
-      const { error } = await (supabase as any).rpc("invite_org_member", {
+      const { data, error } = await (supabase as any).rpc("invite_org_member", {
         target_email: email,
         target_org_id: activeOrgId,
         target_role: role
@@ -125,6 +125,7 @@ export function OrgProvider({ children }: PropsWithChildren) {
       if (error) {
         throw error;
       }
+      return data as string;
     },
     onSuccess: invalidateOrgData
   });
@@ -184,7 +185,7 @@ export function OrgProvider({ children }: PropsWithChildren) {
       },
       invitations: invitationsQuery.data ?? [],
       inviteMember: async (email, role) => {
-        await inviteMutation.mutateAsync({ email, role });
+        return inviteMutation.mutateAsync({ email, role });
       },
       isAdmin,
       loading: membershipsQuery.isLoading,
