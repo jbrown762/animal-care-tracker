@@ -22,7 +22,7 @@ const desktopNavItems = [
   { href: "/dashboard", icon: "home-outline", label: "Dashboard" },
   { href: "/animals", icon: "paw-outline", label: "Animals" },
   { href: "/dashboard", icon: "receipt-outline", label: "Logs" },
-  { href: "/classes", icon: "clipboard-outline", label: "Classes & Templates" },
+  { href: "/classes", icon: "clipboard-outline", label: "Classes & Tasks" },
   { href: "/food-items", icon: "pricetag-outline", label: "Food Items" },
   { href: "/tags", icon: "ticket-outline", label: "Tags" },
   { href: "/people", icon: "people-outline", label: "People & Roles" },
@@ -148,7 +148,7 @@ export function AppShell({ children }: PropsWithChildren) {
 
 function activeDesktopLabel(pathname: string) {
   if (pathname.startsWith("/animals")) return "Animals";
-  if (pathname.startsWith("/classes")) return "Classes & Templates";
+  if (pathname.startsWith("/classes")) return "Classes & Tasks";
   if (pathname.startsWith("/food-items")) return "Food Items";
   if (pathname.startsWith("/tags")) return "Tags";
   if (pathname.startsWith("/people")) return "People & Roles";
@@ -167,7 +167,7 @@ function activeMobileLabel(pathname: string) {
 
 function routeTitle(pathname: string) {
   if (pathname.startsWith("/animals")) return "Animals";
-  if (pathname.startsWith("/classes")) return "Classes & Templates";
+  if (pathname.startsWith("/classes")) return "Classes & Tasks";
   if (pathname.startsWith("/food-items")) return "Food Items";
   if (pathname.startsWith("/tags")) return "Tags";
   if (pathname.startsWith("/people")) return "People & Roles";

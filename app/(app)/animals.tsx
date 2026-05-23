@@ -47,7 +47,7 @@ export default function AnimalsScreen() {
         <EmptyState
           icon="paw-outline"
           title="No animals yet"
-          body="Animal CRUD is scaffold-ready. Admins will create animals here and each new animal will inherit tasks from its class template."
+          body="Animal CRUD is scaffold-ready. Admins will create animals here and each new animal will inherit tasks from its class."
         />
       ) : (
         <View style={styles.grid}>

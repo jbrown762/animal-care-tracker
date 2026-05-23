@@ -153,7 +153,7 @@ export default function TagsScreen() {
       <PageHeader
         eyebrow="Organization"
         title="Tags"
-        description="Use tags to group care tasks and make work easier to scan across animals and templates."
+        description="Use tags to group care tasks and make work easier to scan across animals and class tasks."
       />
 
       {isAdmin ? (

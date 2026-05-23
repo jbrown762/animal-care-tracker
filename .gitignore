@@ -25,7 +25,10 @@ yarn-error.log*
 pnpm-debug.log*
 expo-web.log
 ngrok.log
+ngrok-debug.log
 web-tunnel.log
+web-tunnel-debug.log
+web-tunnel-debug-reuse.log
 
 # OS / editor
 .DS_Store

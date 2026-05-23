@@ -1,18 +1,19 @@
-import { PropsWithChildren } from "react";
+import { forwardRef, PropsWithChildren } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, TextInputProps, View } from "react-native";
 
-export function Field({ label, ...props }: TextInputProps & { label: string }) {
+export const Field = forwardRef<TextInput, TextInputProps & { label: string }>(function Field({ label, ...props }, ref) {
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         placeholderTextColor="#7b8792"
+        ref={ref}
         style={styles.input}
         {...props}
       />
     </View>
   );
-}
+});
 
 export function PrimaryButton({
   children,
